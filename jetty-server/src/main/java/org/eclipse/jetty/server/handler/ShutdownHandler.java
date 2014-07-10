@@ -148,7 +148,11 @@ public class ShutdownHandler extends HandlerWrapper
         if (connector==null)
             return "http://localhost";
 
-        return "http://localhost:" + connector.getPort();
+        try {
+            return "http://localhost:" + connector.getPort();
+        } finally {
+            connector.close();
+        }
     }
     
     

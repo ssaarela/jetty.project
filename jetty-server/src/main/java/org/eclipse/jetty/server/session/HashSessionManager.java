@@ -667,11 +667,15 @@ public class HashSessionManager extends AbstractSessionManager
         if (size>0)
         {
             ClassLoadingObjectInputStream ois =  new ClassLoadingObjectInputStream(is);
-            for (int i=0; i<size;i++)
-            {
-                String key = ois.readUTF();
-                Object value = ois.readObject();
-                session.setAttribute(key,value);
+            try {
+                for (int i=0; i<size;i++)
+                {
+                    String key = ois.readUTF();
+                    Object value = ois.readObject();
+                    session.setAttribute(key,value);
+                }
+            } finally {
+                ois.close();
             }
         }
     }
