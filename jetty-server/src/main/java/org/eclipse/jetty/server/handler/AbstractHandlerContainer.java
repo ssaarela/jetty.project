@@ -58,6 +58,7 @@ public abstract class AbstractHandlerContainer extends AbstractHandler implement
     }
 
     /* ------------------------------------------------------------ */
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Handler> T getChildHandlerByClass(Class<T> byclass)
     {
@@ -65,7 +66,11 @@ public abstract class AbstractHandlerContainer extends AbstractHandler implement
         expandChildren(list,byclass);
         if (list.isEmpty())
             return null;
-        return (T)list.get(0);
+        Handler h = list.get(0);
+        if(!byclass.isAssignableFrom(h.getClass())) {
+            return null;
+        }
+        return (T)h;
     }
 
     /* ------------------------------------------------------------ */
@@ -103,6 +108,7 @@ public abstract class AbstractHandlerContainer extends AbstractHandler implement
         {
             for (Handler h:branches)
             {
+                @SuppressWarnings("unchecked")
                 T container = (T)h;
                 Handler[] candidates = container.getChildHandlersByClass(handler.getClass());
                 if (candidates!=null)

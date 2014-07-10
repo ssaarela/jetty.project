@@ -68,12 +68,12 @@ public class ServletRequestHttpWrapper extends ServletRequestWrapper implements 
         return null;
     }
 
-    public Enumeration getHeaders(String name)
+    public Enumeration<String> getHeaders(String name)
     {
         return null;
     }
 
-    public Enumeration getHeaderNames()
+    public Enumeration<String> getHeaderNames()
     {
         return null;
     }

@@ -107,7 +107,7 @@ public class ContextHandler extends ScopedHandler implements Attributes, Gracefu
 {
     public final static int SERVLET_MAJOR_VERSION=3;
     public final static int SERVLET_MINOR_VERSION=0;
-    public static final Class[] SERVLET_LISTENER_TYPES = new Class[] {ServletContextListener.class,
+    public static final Class<?>[] SERVLET_LISTENER_TYPES = new Class[] {ServletContextListener.class,
                                                                       ServletContextAttributeListener.class,
                                                                       ServletRequestListener.class,
                                                                       ServletRequestAttributeListener.class};
@@ -509,8 +509,7 @@ public class ContextHandler extends ScopedHandler implements Attributes, Gracefu
     /*
      * @see javax.servlet.ServletContext#getInitParameterNames()
      */
-    @SuppressWarnings("rawtypes")
-    public Enumeration getInitParameterNames()
+    public Enumeration<String> getInitParameterNames()
     {
         return Collections.enumeration(_initParams.keySet());
     }
@@ -2062,7 +2061,6 @@ public class ContextHandler extends ScopedHandler implements Attributes, Gracefu
         /*
          * @see javax.servlet.ServletContext#getInitParameterNames()
          */
-        @SuppressWarnings("unchecked")
         @Override
         public Enumeration<String> getInitParameterNames()
         {
@@ -2199,6 +2197,7 @@ public class ContextHandler extends ScopedHandler implements Attributes, Gracefu
 
             try
             {
+                @SuppressWarnings("unchecked")
                 Class<? extends EventListener> clazz = _classLoader==null?Loader.loadClass(ContextHandler.class,className):_classLoader.loadClass(className);
                 addListener(clazz);
             }
@@ -2293,9 +2292,9 @@ public class ContextHandler extends ScopedHandler implements Attributes, Gracefu
                //classloader, or a parent of it
                try
                {
-                   Class reflect = Loader.loadClass(getClass(), "sun.reflect.Reflection");
+                   Class<?> reflect = Loader.loadClass(getClass(), "sun.reflect.Reflection");
                    Method getCallerClass = reflect.getMethod("getCallerClass", Integer.TYPE);
-                   Class caller = (Class)getCallerClass.invoke(null, 2);
+                   Class<?> caller = (Class<?>)getCallerClass.invoke(null, 2);
 
                    boolean ok = false;
                    ClassLoader callerLoader = caller.getClassLoader();
