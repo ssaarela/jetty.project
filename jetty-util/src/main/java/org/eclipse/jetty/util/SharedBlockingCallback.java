@@ -245,9 +245,12 @@ public class SharedBlockingCallback
             }
             finally
             {
-                _state = IDLE;
-                _idle.signalAll();
-                _lock.unlock();
+                try {
+                    _state = IDLE;
+                    _idle.signalAll();
+                } finally {
+                    _lock.unlock();
+                }
             }
         }
 
