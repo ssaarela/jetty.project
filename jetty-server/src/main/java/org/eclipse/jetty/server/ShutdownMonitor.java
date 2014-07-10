@@ -101,8 +101,16 @@ public class ShutdownMonitor
                     {
                         // Graceful Shutdown
                         debug("Issuing graceful shutdown..");
-                        ShutdownThread.getInstance().run();
-                        
+                        ShutdownThread st = ShutdownThread.getInstance();
+                        st.start();
+                        while (st.isAlive()) {
+                            try {
+                                st.join();
+                            } catch (InterruptedException e){
+                                continue;
+                            }
+                        }
+
                         //Stop accepting any more
                         close(serverSocket);
                         serverSocket = null;
