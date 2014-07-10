@@ -271,8 +271,7 @@ public class DefaultServlet extends HttpServlet implements ResourceFactory
                     _cache.setMaxCacheSize(max_cache_size);
                 if (max_cached_file_size>=-1)
                     _cache.setMaxCachedFileSize(max_cached_file_size);
-                if (max_cached_files>=-1)
-                    _cache.setMaxCachedFiles(max_cached_files);
+                _cache.setMaxCachedFiles(max_cached_files);
             }
         }
         catch (Exception e)
