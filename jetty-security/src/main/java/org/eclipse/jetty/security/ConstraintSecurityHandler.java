@@ -514,7 +514,7 @@ public class ConstraintSecurityHandler extends SecurityHandler implements Constr
         else
         {
             //combine with any entry that covers all methods
-            if (httpMethod == null)
+            if (httpMethod.equals(ALL_METHODS))
             {
                 for (Map.Entry<String, RoleInfo> entry : mappings.entrySet())
                 {
