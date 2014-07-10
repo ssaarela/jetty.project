@@ -784,6 +784,11 @@ public class HttpParser
 
     private boolean handleKnownHeaders(ByteBuffer buffer)
     {
+        if(_header == null)
+        {
+            return false;
+        }
+        
         boolean add_to_connection_trie=false;
         switch (_header)
         {
