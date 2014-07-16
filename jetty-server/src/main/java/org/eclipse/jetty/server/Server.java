@@ -606,6 +606,7 @@ public class Server extends HandlerWrapper implements Attributes
     /**
      * @return The URI of the first {@link NetworkConnector} and first {@link ContextHandler}, or null
      */
+    @SuppressWarnings("resource")
     public URI getURI()
     {
         NetworkConnector connector=null;
@@ -621,31 +622,27 @@ public class Server extends HandlerWrapper implements Attributes
         if (connector==null)
             return null;
 
-        try {
-            ContextHandler context = getChildHandlerByClass(ContextHandler.class);
+        ContextHandler context = getChildHandlerByClass(ContextHandler.class);
 
-            try
-            {
-                String scheme=connector.getDefaultConnectionFactory().getProtocol().startsWith("SSL-")?"https":"http";
+        try
+        {
+            String scheme=connector.getDefaultConnectionFactory().getProtocol().startsWith("SSL-")?"https":"http";
 
-                String host=connector.getHost();
-                if (context!=null && context.getVirtualHosts()!=null && context.getVirtualHosts().length>0)
-                    host=context.getVirtualHosts()[0];
-                if (host==null)
-                    host=InetAddress.getLocalHost().getHostAddress();
+            String host=connector.getHost();
+            if (context!=null && context.getVirtualHosts()!=null && context.getVirtualHosts().length>0)
+                host=context.getVirtualHosts()[0];
+            if (host==null)
+                host=InetAddress.getLocalHost().getHostAddress();
 
-                String path=context==null?null:context.getContextPath();
-                if (path==null)
-                    path="/";
-                return new URI(scheme,null,host,connector.getLocalPort(),path,null,null);
-            }
-            catch(Exception e)
-            {
-                LOG.warn(e);
-                return null;
-            }
-        } finally {
-            connector.close();
+            String path=context==null?null:context.getContextPath();
+            if (path==null)
+                path="/";
+            return new URI(scheme,null,host,connector.getLocalPort(),path,null,null);
+        }
+        catch(Exception e)
+        {
+            LOG.warn(e);
+            return null;
         }
     }
 
