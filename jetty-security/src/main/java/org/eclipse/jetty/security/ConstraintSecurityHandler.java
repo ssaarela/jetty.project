@@ -511,6 +511,8 @@ public class ConstraintSecurityHandler extends SecurityHandler implements Constr
                 mappings.put(ALL_METHODS,roleInfo);
             }
         }
+        /* FIXME: Bug #439753 
+         * this is part of the servlet spec, and currently doesn't work.
         else
         {
             //combine with any entry that covers all methods
@@ -526,6 +528,7 @@ public class ConstraintSecurityHandler extends SecurityHandler implements Constr
                 }
             }
         }
+        */
     }
 
     /* ------------------------------------------------------------ */
