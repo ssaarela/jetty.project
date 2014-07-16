@@ -28,8 +28,6 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-import org.eclipse.jetty.util.thread.ShutdownThread;
-
 /**
  * Shutdown/Stop Monitor thread.
  * <p>
@@ -54,20 +52,18 @@ public class ShutdownMonitor
     }
 
     /**
-     * ShutdownMonitorThread
+     * ShutdownMonitorRunnable
      *
      * Thread for listening to STOP.PORT for command to stop Jetty.
      * If ShowndownMonitor.exitVm is true, then Sytem.exit will also be
      * called after the stop.
      *
      */
-    public class ShutdownMonitorThread extends Thread
+    private class ShutdownMonitorRunnable implements Runnable
     {
-
-        public ShutdownMonitorThread ()
+        public ShutdownMonitorRunnable()
         {
-            setDaemon(true);
-            setName("ShutdownMonitor");
+            startListenSocket();
         }
         
         @Override
@@ -101,15 +97,6 @@ public class ShutdownMonitor
                     {
                         // Graceful Shutdown
                         debug("Issuing graceful shutdown..");
-                        ShutdownThread st = ShutdownThread.getInstance();
-                        st.start();
-                        while (st.isAlive()) {
-                            try {
-                                st.join();
-                            } catch (InterruptedException e){
-                                continue;
-                            }
-                        }
 
                         //Stop accepting any more
                         close(serverSocket);
@@ -156,28 +143,7 @@ public class ShutdownMonitor
             }
         }
         
-        public void start()
-        {
-            if (isAlive())
-            {
-                // TODO why are we reentrant here?
-                if (DEBUG)
-                    System.err.printf("ShutdownMonitorThread already started");
-                return; // cannot start it again
-            }
-
-            startListenSocket();
-            
-            if (serverSocket == null)
-            {
-                return;
-            }
-            if (DEBUG)
-                System.err.println("Starting ShutdownMonitorThread");
-            super.start();
-        }
-        
-        private void startListenSocket()
+        public void startListenSocket()
         {
             if (port < 0)
             {            
@@ -225,9 +191,7 @@ public class ShutdownMonitor
     private String key;
     private boolean exitVm;
     private ServerSocket serverSocket;
-    private ShutdownMonitorThread thread;
-    
-    
+    private Thread thread;
 
     /**
      * Create a ShutdownMonitor using configuration from the System properties.
@@ -380,18 +344,20 @@ public class ShutdownMonitor
 
     protected void start() throws Exception
     {
-        ShutdownMonitorThread t = null;
+        Thread t = null;
+        
         synchronized (this)
         {
             if (thread != null && thread.isAlive())
             {
-                // TODO why are we reentrant here?
                 if (DEBUG)
                     System.err.printf("ShutdownMonitorThread already started");
                 return; // cannot start it again
             }
          
-            thread = new ShutdownMonitorThread();
+            thread = new Thread(new ShutdownMonitorRunnable());
+            thread.setDaemon(true);
+            thread.setName("ShutdownMonitor");
             t = thread;
         }
          
