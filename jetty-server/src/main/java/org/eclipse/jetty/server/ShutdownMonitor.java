@@ -28,6 +28,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
+import org.eclipse.jetty.util.thread.ShutdownThread;
+
 /**
  * Shutdown/Stop Monitor thread.
  * <p>
@@ -97,6 +99,7 @@ public class ShutdownMonitor
                     {
                         // Graceful Shutdown
                         debug("Issuing graceful shutdown..");
+                        ShutdownThread.getInstance().run();
 
                         //Stop accepting any more
                         close(serverSocket);
