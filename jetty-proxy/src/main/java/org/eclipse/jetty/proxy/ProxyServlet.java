@@ -473,7 +473,7 @@ public class ProxyServlet extends HttpServlet
             }
             builder.append("\r\n");
 
-            _log.debug("{} proxying to upstream:{}{}{}{}",
+            _log.debug("{} proxying to upstream:{}{}{}{}{}",
                     requestId,
                     System.lineSeparator(),
                     builder,
